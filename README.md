@@ -6,5 +6,6 @@ O projeto consiste no desenvolvimento de um aplicativo **jogo de forca**. O apli
 Para cada rodada o usuário deve ser desafiado com uma palavra diferente das rodadas anteriores. Ao final de todas as rodadas deve ser emitido um relatório para o usuário que mostre a quantidade e as palavras que acertou, a quantidade e as palavras que errou. O aplicativo deve ser implementado em alguma das arquiteturas de softwares vistas durante a disciplina. Para cada rodada uma palavra deve ser recuperada a partir da base de dados que inicialmente poderá local (banco de dados, arquivos, Content Provider), mas que na entrega final será um Web Service. O Web Service Restful será criado e disponibilizado pelo professor, bem como a apresentação e explicação da API de acesso. Serão disponibilizados os seguintes serviços:
 - Lista de identificadores para um determinado nível de dificuldade.
 - Uma palavra com base no identificador.
-  **Dica:** Foque inicialmente nas funcionalidades do aplicativo. Uma vez finalizado os requisitos
+
+**Dica:** Foque inicialmente nas funcionalidades do aplicativo. Uma vez finalizado os requisitos
   funcionais e havendo tempo, concentre-se na apresentação (leiaute) do mesmo.
