@@ -11,10 +11,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import br.edu.ifsp.aluno.vander.gabriel.hangman.R
+import br.edu.ifsp.aluno.vander.gabriel.hangman.core.presentation.manager.MainViewModel
 
 @Composable
-fun InitialPage() {
+fun InitialPage(
+    navController: NavController,
+    mainViewModel: MainViewModel = viewModel()
+) {
     Scaffold(modifier = Modifier.padding(10.dp)) {
         Column(
             modifier = Modifier
@@ -29,7 +35,7 @@ fun InitialPage() {
                 painter = painterResource(id = R.drawable.stickman_on_rope),
                 contentDescription = null
             )
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = { navController.navigate("new_game") }) {
                 Text(text = "New Game")
             }
         }
