@@ -18,7 +18,7 @@ import br.edu.ifsp.aluno.vander.gabriel.hangman.core.presentation.manager.MainVi
 import com.chargemap.compose.numberpicker.NumberPicker
 
 @Composable
-fun NewGamePage(
+fun GameConfigurationPage(
     navController: NavController,
     mainViewModel: MainViewModel,
 ) {
@@ -37,7 +37,9 @@ fun NewGamePage(
                 ConfigurationStatus.CONFIGURING_ROUNDS -> RoundConfiguration(onSave = {
                     mainViewModel.setNumberOfRounds(it)
                 })
-                ConfigurationStatus.FINISHED -> navController.popBackStack()
+                ConfigurationStatus.FINISHED -> navController.navigate("game") {
+                    popUpTo("main")
+                }
             }
         }
     }

@@ -5,8 +5,6 @@ X
 eapp/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/domain/repositories/WordRepository.kt,b\8\b8c6f407805afbbb92000596241ab9f5bbad9c6d
 ù
 mapp/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/data/local/data_sources/InMemoryDataSource.kt,f\3\f36817374b421b686f1671c2f14c5f8615582f91
-á
-Wapp/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/domain/entities/Word.kt,4\a\4abea9fe1adb7dbca246c8f64983ed44fce75c2d
 ç
 ]app/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/domain/entities/Difficulty.kt,d\3\d387d08ec7e6b9d574d69c440f0f2decc6e6fd97
 é
@@ -15,7 +13,5 @@ Wapp/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/domain/entities
 `app/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/data/local/mappers/WordMapper.kt,3\9\398c22babd881059c9594d477bd87ef42d89f1c3
 £
 sapp/src/test/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/data/repositories/WordRepositoryInMemoryImplTest.kt,a\3\a376748eec9dc1799563e3803003dd821bc7dbd9
-ü
-oapp/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/data/repositories/WordRepositoryInMemoryImpl.kt,2\5\25ec9761855b067f9504e26ed23bec1fe897d30a
 z
 Japp/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/MainActivity.kt,4\8\4826c3240332ca23c5d582a7d4b920ae4e9e48bf
