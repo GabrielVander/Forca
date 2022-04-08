@@ -44,7 +44,10 @@ fun GamePage(
             } else {
                 WordDisplay(game!!.currentRound!!)
                 Spacer(modifier = Modifier.height(25.dp))
+                GuessesDisplay(game!!.currentRound!!.guessedLetters)
+                Spacer(modifier = Modifier.height(25.dp))
                 Keyboard(
+                    alreadyGuessedLetters = game!!.currentRound!!.guessedLetters,
                     onLetterChosen = { mainViewModel.addGuess(it) }
                 )
             }
@@ -52,12 +55,27 @@ fun GamePage(
     }
 }
 
+@Composable
+private fun GuessesDisplay(guessedLetters: List<Char>) {
+    Text(text = "You've already picked:")
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        for (guessedLetter in guessedLetters) {
+            Text(text = guessedLetter.toString())
+        }
+    }
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun Keyboard(
+    alreadyGuessedLetters: List<Char>,
     onLetterChosen: (Char) -> Unit = {}
 ) {
     val alphabet: MutableList<Char> = CharRange('A', 'Z').toMutableList()
+    alphabet.removeIf { alreadyGuessedLetters.contains(it) }
 
     LazyVerticalGrid(
         cells = GridCells.Fixed(6),
