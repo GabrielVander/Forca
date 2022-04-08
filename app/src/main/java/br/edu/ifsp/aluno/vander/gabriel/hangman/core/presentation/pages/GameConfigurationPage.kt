@@ -36,9 +36,12 @@ fun GameConfigurationPage(
                 ConfigurationStatus.CONFIGURING_DIFFICULTY -> DifficultyConfiguration(mainViewModel)
                 ConfigurationStatus.CONFIGURING_ROUNDS -> RoundConfiguration(onSave = {
                     mainViewModel.setNumberOfRounds(it)
+                    navController.navigate("game") {
+                        popUpTo("main")
+                    }
                 })
-                ConfigurationStatus.FINISHED -> navController.navigate("game") {
-                    popUpTo("main")
+                else -> {
+                    Text(text = "Something went wrong")
                 }
             }
         }
