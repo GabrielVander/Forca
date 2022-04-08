@@ -28,6 +28,7 @@ fun GamePage(
     mainViewModel: MainViewModel
 ) {
     val game: Game? by mainViewModel.currentGame.observeAsState(null)
+    val gameIsRunning: Boolean = game == null || game!!.currentRound == null
 
     Scaffold {
         Column(
@@ -37,21 +38,75 @@ fun GamePage(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            if (game == null || game!!.currentRound == null) {
-                Start(
-                    onStart = { mainViewModel.startNewRound() }
-                )
-            } else {
-                WordDisplay(game!!.currentRound!!)
-                Spacer(modifier = Modifier.height(25.dp))
-                GuessesDisplay(game!!.currentRound!!.guessedLetters)
-                Spacer(modifier = Modifier.height(25.dp))
-                Keyboard(
-                    alreadyGuessedLetters = game!!.currentRound!!.guessedLetters,
-                    onLetterChosen = { mainViewModel.addGuess(it) }
-                )
-            }
+            Content(
+                gameIsRunning = gameIsRunning,
+                currentRound = game?.currentRound,
+                onGameStart = { mainViewModel.startNewRound() },
+                onLetterChosen = { mainViewModel.addGuess(it) }
+            )
         }
+    }
+}
+
+@Composable
+private fun Content(
+    gameIsRunning: Boolean,
+    currentRound: Round?,
+    onGameStart: () -> Unit = {},
+    onLetterChosen: (Char) -> Unit = {}
+) {
+    if (gameIsRunning) {
+        Start(
+            onStart = onGameStart
+        )
+    } else {
+        RoundDisplay(
+            currentRound!!,
+            onLetterChosen
+        )
+    }
+}
+
+@Composable
+private fun Start(
+    onStart: () -> Unit = {}
+) {
+    Text(text = "Let's go!", fontSize = 42.sp)
+    Spacer(modifier = Modifier.height(15.dp))
+    Button(onClick = onStart) {
+        Text(text = "Start")
+    }
+}
+
+@Composable
+private fun RoundDisplay(
+    currentRound: Round,
+    onLetterChosen: (Char) -> Unit
+) {
+    WordDisplay(currentRound)
+    Spacer(modifier = Modifier.height(25.dp))
+    GuessesDisplay(currentRound.guessedLetters)
+    Spacer(modifier = Modifier.height(25.dp))
+    Keyboard(
+        alreadyGuessedLetters = currentRound.guessedLetters,
+        onLetterChosen = onLetterChosen
+    )
+}
+
+@Composable
+private fun WordDisplay(round: Round) {
+    val word: Word = round.word
+    val chosenLetters: List<Char> = round.guessedLetters
+
+    Row(modifier = Modifier) {
+        Text(
+            modifier = Modifier,
+            fontSize = 5.em,
+            text = buildObfuscatedWord(
+                word = word.value,
+                chosenLetters = chosenLetters
+            )
+        )
     }
 }
 
@@ -93,37 +148,9 @@ private fun Keyboard(
     }
 }
 
-@Composable
-private fun WordDisplay(round: Round) {
-    val word: Word = round.word
-    val chosenLetters: List<Char> = round.guessedLetters
-
-    Row(modifier = Modifier) {
-        Text(
-            modifier = Modifier,
-            fontSize = 5.em,
-            text = buildObfuscatedWord(
-                word = word.value,
-                chosenLetters = chosenLetters
-            )
-        )
-    }
-}
-
-@Composable
-private fun Start(
-    onStart: () -> Unit = {}
-) {
-    Text(text = "Let's go!", fontSize = 42.sp)
-    Spacer(modifier = Modifier.height(15.dp))
-    Button(onClick = onStart) {
-        Text(text = "Start")
-    }
-}
-
 fun buildObfuscatedWord(word: String, chosenLetters: List<Char>): String {
     return buildString {
-        for (character in word) {
+        for (character in word.uppercase()) {
             if (word.indexOf(character) > 0) {
                 append(' ')
             }
