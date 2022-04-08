@@ -1,6 +1,10 @@
 package br.edu.ifsp.aluno.vander.gabriel.hangman.core.presentation.pages
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -33,12 +37,39 @@ fun GamePage(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            if (game?.currentRound == null) {
+            if (game == null || game!!.currentRound == null) {
                 Start(
                     onStart = { mainViewModel.startNewRound() }
                 )
             } else {
                 WordDisplay(game!!.currentRound!!)
+                Spacer(modifier = Modifier.height(25.dp))
+                Keyboard(
+                    onLetterChosen = { mainViewModel.addGuess(it) }
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun Keyboard(
+    onLetterChosen: (Char) -> Unit = {}
+) {
+    val alphabet: MutableList<Char> = CharRange('A', 'Z').toMutableList()
+
+    LazyVerticalGrid(
+        cells = GridCells.Fixed(6),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        items(alphabet) {
+            Button(
+                modifier = Modifier,
+                onClick = { onLetterChosen(it) }
+            ) {
+                Text(text = it.toString())
             }
         }
     }
@@ -49,14 +80,16 @@ private fun WordDisplay(round: Round) {
     val word: Word = round.word
     val chosenLetters: List<Char> = round.guessedLetters
 
-    Text(
-        modifier = Modifier,
-        fontSize = 5.em,
-        text = buildObfuscatedWord(
-            word = word.value,
-            chosenLetters = chosenLetters
+    Row(modifier = Modifier) {
+        Text(
+            modifier = Modifier,
+            fontSize = 5.em,
+            text = buildObfuscatedWord(
+                word = word.value,
+                chosenLetters = chosenLetters
+            )
         )
-    )
+    }
 }
 
 @Composable

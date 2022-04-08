@@ -54,4 +54,16 @@ class MainViewModel : ViewModel() {
             }
         }
     }
+
+    fun addGuess(letter: Char) {
+        val game = _currentGame.value
+        _currentGame.value = game?.copy(
+            currentRound = game.currentRound?.copy(
+                guessedLetters = listOf(
+                    *(game.currentRound.guessedLetters.toTypedArray()),
+                    letter
+                )
+            )
+        )
+    }
 }
