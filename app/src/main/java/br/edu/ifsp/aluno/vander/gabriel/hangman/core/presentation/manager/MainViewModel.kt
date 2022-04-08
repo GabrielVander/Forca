@@ -56,14 +56,28 @@ class MainViewModel : ViewModel() {
     }
 
     fun addGuess(letter: Char) {
-        val game = _currentGame.value
-        _currentGame.value = game?.copy(
-            currentRound = game.currentRound?.copy(
-                guessedLetters = listOf(
-                    *(game.currentRound.guessedLetters.toTypedArray()),
-                    letter
+        val game: Game? = _currentGame.value
+        if (game?.currentRound != null) {
+            val guessedLetters = listOf(
+                *(game.currentRound.guessedLetters.toTypedArray()),
+                letter
+            )
+            _currentGame.value = game.copy(
+                currentRound = game.currentRound.copy(
+                    numberOfGuesses = getNewNumberOfGuesses(game.currentRound, letter),
+                    guessedLetters = guessedLetters
                 )
             )
-        )
+        }
+    }
+
+    private fun getNewNumberOfGuesses(
+        currentRound: Round,
+        letter: Char
+    ): Int {
+        if (currentRound.word.value.uppercase().contains(letter)) {
+            return currentRound.numberOfGuesses
+        }
+        return currentRound.numberOfGuesses + 1
     }
 }

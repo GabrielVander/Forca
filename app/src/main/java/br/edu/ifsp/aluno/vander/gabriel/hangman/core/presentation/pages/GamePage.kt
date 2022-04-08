@@ -81,15 +81,34 @@ private fun Start(
 @Composable
 private fun RoundDisplay(
     currentRound: Round,
-    onLetterChosen: (Char) -> Unit
+    onLetterChosen: (Char) -> Unit = {},
+    onEndRound: () -> Unit = {}
 ) {
+    val didPlayerRanOutOfGuesses: Boolean =
+        currentRound.numberOfGuesses == currentRound.maxNumberOfGuesses
+    val didPlayerGuessCorrectly: Boolean = checkIfPlayerWon(currentRound)
+    val isRoundOver: Boolean = didPlayerRanOutOfGuesses || didPlayerGuessCorrectly
+
     WordDisplay(currentRound)
     Spacer(modifier = Modifier.height(25.dp))
-    GuessesDisplay(currentRound.guessedLetters)
-    Spacer(modifier = Modifier.height(25.dp))
-    Keyboard(
-        alreadyGuessedLetters = currentRound.guessedLetters,
-        onLetterChosen = onLetterChosen
+    if (isRoundOver) {
+        Text(text = if (didPlayerGuessCorrectly) "You've won!" else "You've lost!")
+        Button(onClick = onEndRound) {
+            Text(text = "End Round")
+        }
+    } else {
+        GuessesDisplay(currentRound.guessedLetters)
+        Spacer(modifier = Modifier.height(25.dp))
+        Keyboard(
+            alreadyGuessedLetters = currentRound.guessedLetters,
+            onLetterChosen = onLetterChosen
+        )
+    }
+}
+
+fun checkIfPlayerWon(currentRound: Round): Boolean {
+    return currentRound.guessedLetters.containsAll(
+        currentRound.word.value.uppercase().toCharArray().toList()
     )
 }
 
@@ -151,10 +170,10 @@ private fun Keyboard(
 fun buildObfuscatedWord(word: String, chosenLetters: List<Char>): String {
     return buildString {
         for (character in word.uppercase()) {
-            if (word.indexOf(character) > 0) {
+            if (word.uppercase().indexOf(character) > 0) {
                 append(' ')
             }
-            append(if (chosenLetters.contains(character)) character else '_')
+            append(if (!chosenLetters.contains(character)) '_' else character)
         }
     }
 }

@@ -4,6 +4,7 @@ data class Game(
     val difficulty: Difficulty = Difficulty.EASY,
     val amountOfRounds: Int = 1,
     val currentRound: Round? = null,
+    val pastRounds: List<Round> = listOf(),
     val correctWords: List<Word> = listOf(),
     val incorrectWords: List<Word> = listOf(),
     val gameStatus: GameStatus = GameStatus.CONFIGURING,

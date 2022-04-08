@@ -5,4 +5,6 @@ data class Round(
     val roundNumber: Int = 1,
     val maxNumberOfGuesses: Int = 6,
     val guessedLetters: List<Char> = listOf(),
+    val numberOfGuesses: Int = 0,
+    val didPlayerWin: Boolean = false
 )
