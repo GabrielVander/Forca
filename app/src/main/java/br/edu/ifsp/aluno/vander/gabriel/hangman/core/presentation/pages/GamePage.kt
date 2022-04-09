@@ -42,7 +42,15 @@ fun GamePage(
                 gameIsRunning = gameIsRunning,
                 currentRound = game?.currentRound,
                 onGameStart = { mainViewModel.startNewRound() },
-                onLetterChosen = { mainViewModel.addGuess(it) }
+                onLetterChosen = { mainViewModel.addGuess(it) },
+                onEndRound = {
+                    if (game != null && game!!.currentRound != null) {
+                        if (game!!.currentRound!!.roundNumber < game!!.amountOfRounds) {
+                            mainViewModel.startNewRound()
+                        }
+                    } else {
+                    }
+                }
             )
         }
     }
@@ -53,7 +61,8 @@ private fun Content(
     gameIsRunning: Boolean,
     currentRound: Round?,
     onGameStart: () -> Unit = {},
-    onLetterChosen: (Char) -> Unit = {}
+    onLetterChosen: (Char) -> Unit = {},
+    onEndRound: () -> Unit = {},
 ) {
     if (gameIsRunning) {
         Start(
@@ -61,8 +70,9 @@ private fun Content(
         )
     } else {
         RoundDisplay(
-            currentRound!!,
-            onLetterChosen
+            currentRound = currentRound!!,
+            onLetterChosen = onLetterChosen,
+            onEndRound = onEndRound,
         )
     }
 }
@@ -117,9 +127,11 @@ private fun WordDisplay(round: Round) {
     val word: Word = round.word
     val chosenLetters: List<Char> = round.guessedLetters
 
-    Row(modifier = Modifier) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
         Text(
-            modifier = Modifier,
             fontSize = 5.em,
             text = buildObfuscatedWord(
                 word = word.value,

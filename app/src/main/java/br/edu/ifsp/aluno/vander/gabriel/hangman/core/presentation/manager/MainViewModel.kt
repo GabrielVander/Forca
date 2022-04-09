@@ -37,17 +37,17 @@ class MainViewModel : ViewModel() {
         val currentGame = _currentGame.value
 
         if (currentGame != null) {
-            val previousRound: Round? = currentGame.currentRound
-            val hasPreviousRound: Boolean = previousRound != null
-
             GlobalScope.launch {
-                val word: Word = getWordUseCase.execute(currentGame.difficulty)
+                val previousRound: Round? = currentGame.currentRound
+                val hasPreviousRound: Boolean = previousRound != null
+
+                val word: Word = getWordUseCase.execute(_currentGame.value!!.difficulty)
 
                 _currentGame.postValue(
-                    currentGame.copy(
+                    _currentGame.value!!.copy(
                         currentRound = Round(
                             word = word,
-                            roundNumber = if (hasPreviousRound) previousRound!!.roundNumber else 1,
+                            roundNumber = if (hasPreviousRound) previousRound!!.roundNumber + 1 else 1,
                         )
                     )
                 )
