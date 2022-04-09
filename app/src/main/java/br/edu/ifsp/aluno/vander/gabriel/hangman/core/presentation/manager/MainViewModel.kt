@@ -15,7 +15,11 @@ class MainViewModel : ViewModel() {
     private val _currentGame: MutableLiveData<Game> = MutableLiveData()
     val currentGame: LiveData<Game> = _currentGame
 
+    private val _pastRounds: MutableLiveData<List<Round>> = MutableLiveData(listOf())
+    val pastRounds: LiveData<List<Round>> = _pastRounds
+
     fun newGame() {
+        _pastRounds.value = listOf()
         _currentGame.value = Game()
     }
 
@@ -79,5 +83,24 @@ class MainViewModel : ViewModel() {
             return currentRound.numberOfGuesses
         }
         return currentRound.numberOfGuesses + 1
+    }
+
+    fun finishCurrentRound() {
+        val pastRounds = _pastRounds.value!!
+        val currentRound: Round = _currentGame.value!!.currentRound!!
+
+        val finishedRound: Round = currentRound.copy(
+            didPlayerWin = checkIfPlayerWonRound(currentRound)
+        )
+        _pastRounds.value = listOf(
+            *(pastRounds.toTypedArray()),
+            finishedRound
+        )
+    }
+
+    private fun checkIfPlayerWonRound(round: Round): Boolean {
+        return round.guessedLetters.containsAll(
+            round.word.value.uppercase().toCharArray().toList()
+        )
     }
 }

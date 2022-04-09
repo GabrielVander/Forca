@@ -10,9 +10,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.presentation.manager.MainViewModel
-import br.edu.ifsp.aluno.vander.gabriel.hangman.core.presentation.pages.GamePage
-import br.edu.ifsp.aluno.vander.gabriel.hangman.core.presentation.pages.InitialPage
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.presentation.pages.GameConfigurationPage
+import br.edu.ifsp.aluno.vander.gabriel.hangman.core.presentation.pages.GamePage
+import br.edu.ifsp.aluno.vander.gabriel.hangman.core.presentation.pages.GameResultPage
+import br.edu.ifsp.aluno.vander.gabriel.hangman.core.presentation.pages.InitialPage
 import br.edu.ifsp.aluno.vander.gabriel.hangman.ui.theme.HangmanTheme
 
 @Composable
@@ -39,6 +40,12 @@ fun HangmanApp(mainViewModel: MainViewModel = viewModel()) {
                 }
                 composable("game") {
                     GamePage(
+                        navController = navController,
+                        mainViewModel = mainViewModel
+                    )
+                }
+                composable("game_result") {
+                    GameResultPage(
                         navController = navController,
                         mainViewModel = mainViewModel
                     )

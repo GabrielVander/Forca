@@ -44,11 +44,13 @@ fun GamePage(
                 onGameStart = { mainViewModel.startNewRound() },
                 onLetterChosen = { mainViewModel.addGuess(it) },
                 onEndRound = {
-                    if (game != null && game!!.currentRound != null) {
-                        if (game!!.currentRound!!.roundNumber < game!!.amountOfRounds) {
-                            mainViewModel.startNewRound()
-                        }
+                    mainViewModel.finishCurrentRound()
+                    if (game!!.currentRound!!.roundNumber < game!!.amountOfRounds) {
+                        mainViewModel.startNewRound()
                     } else {
+                        navController.navigate("game_result") {
+                            popUpTo("main")
+                        }
                     }
                 }
             )
