@@ -15,3 +15,5 @@ mapp/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/data/local/data
 sapp/src/test/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/data/repositories/WordRepositoryInMemoryImplTest.kt,a\3\a376748eec9dc1799563e3803003dd821bc7dbd9
 z
 Japp/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/MainActivity.kt,4\8\4826c3240332ca23c5d582a7d4b920ae4e9e48bf
+›
+kapp/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/presentation/pages/GameConfigurationPage.kt,c\1\c1dca12c7f8ccedb4973ac96c4f6b83221d3db29
