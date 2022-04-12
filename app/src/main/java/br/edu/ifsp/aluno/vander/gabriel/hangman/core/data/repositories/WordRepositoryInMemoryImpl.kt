@@ -13,11 +13,12 @@ class WordRepositoryInMemoryImpl(
     WordRepository {
 
     override suspend fun getSingleWordByDifficulty(difficulty: Difficulty): Word {
-        val word: WordModel = getRandomWord()
+        val word: WordModel = getRandomWordWithDifficulty(difficulty)
         return WordMapper.fromModel(word)
     }
 
-    private suspend fun getRandomWord(): WordModel {
-        return inMemoryDataSource.getWords().random()
+    private suspend fun getRandomWordWithDifficulty(difficulty: Difficulty): WordModel {
+        return inMemoryDataSource.getWords().shuffled()
+            .first { it.difficulty == difficulty.ordinal + 1 }
     }
 }

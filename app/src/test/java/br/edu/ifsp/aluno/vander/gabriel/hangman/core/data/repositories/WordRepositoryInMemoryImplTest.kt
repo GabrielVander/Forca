@@ -22,7 +22,8 @@ internal class WordRepositoryInMemoryImplTest {
 
     @Before
     fun setUp() {
-        mockInMemoryDataSource = mockk(relaxed = true)
+        mockInMemoryDataSource = mockk()
+        mockkObject(WordMapper)
 
         repository = WordRepositoryInMemoryImpl(
             inMemoryDataSource = mockInMemoryDataSource
@@ -36,9 +37,15 @@ internal class WordRepositoryInMemoryImplTest {
 
     @Test
     fun `should call data source correctly`(): Unit = runBlocking {
-        val mockModels: List<WordModel> = listOf()
+        val mockModels: List<WordModel> = listOf(
+            mockk {
+                every { difficulty } returns 3
+            }
+        )
+        val mockWordEntity: Word = mockk()
 
         coEvery { mockInMemoryDataSource.getWords() } returns mockModels
+        every { WordMapper.fromModel(any()) } returns mockWordEntity
 
         repository.getSingleWordByDifficulty(Difficulty.HARD)
 
@@ -53,44 +60,71 @@ internal class WordRepositoryInMemoryImplTest {
             "HARD",
         ]
     )
-    fun `should return a word with the specified difficulty`(difficulty: String): Unit =
+    fun `should return a word with the specified difficulty`(expectedDifficulty: String): Unit =
         runBlocking {
-            val mockModels: List<WordModel> = listOf()
+            val mockEasyWordModel: WordModel = mockk {
+                every { difficulty } returns 1
+            }
+
+            val mockMediumWordModel: WordModel = mockk {
+                every { difficulty } returns 2
+            }
+
+            val mockHardWordModel: WordModel = mockk {
+                every { difficulty } returns 3
+            }
+
+            val mockModels: List<WordModel> = listOf(
+                mockEasyWordModel,
+                mockMediumWordModel,
+                mockHardWordModel,
+            )
+
+            val mockEasyWord: Word = mockk {
+                every { difficulty } returns Difficulty.EASY
+            }
+            val mockMediumWord: Word = mockk {
+                every { difficulty } returns Difficulty.MEDIUM
+            }
+            val mockHardWord: Word = mockk {
+                every { difficulty } returns Difficulty.HARD
+            }
 
             coEvery { mockInMemoryDataSource.getWords() } returns mockModels
+            every { WordMapper.fromModel(mockEasyWordModel) } returns mockEasyWord
+            every { WordMapper.fromModel(mockMediumWordModel) } returns mockMediumWord
+            every { WordMapper.fromModel(mockHardWordModel) } returns mockHardWord
 
-            val expectedDifficulty: Difficulty = Difficulty.valueOf(difficulty)
+            val expectedDifficultyEntity: Difficulty = Difficulty.valueOf(expectedDifficulty)
 
-            val word: Word = repository.getSingleWordByDifficulty(expectedDifficulty)
+            val word: Word = repository.getSingleWordByDifficulty(expectedDifficultyEntity)
 
-            Assert.assertEquals(word.difficulty, expectedDifficulty)
+            Assert.assertEquals(expectedDifficultyEntity, word.difficulty)
 
         }
 
     @Test
     fun `should use WordMapper to map models returned by the data source`(): Unit = runBlocking {
-        val mockWordModel1: WordModel = mockk(relaxed = true)
-        val mockWordModel2: WordModel = mockk(relaxed = true)
-        val mockWordModel3: WordModel = mockk(relaxed = true)
-
         val mockModels: List<WordModel> = listOf(
-            mockWordModel1,
-            mockWordModel2,
-            mockWordModel3,
+            mockk {
+                every { difficulty } returns 1
+            },
+            mockk {
+                every { difficulty } returns 2
+            },
+            mockk {
+                every { difficulty } returns 3
+            }
         )
 
-        val mockWord: Word = mockk(relaxed = true)
+        val mockWordEntity: Word = mockk()
 
         coEvery { mockInMemoryDataSource.getWords() } returns mockModels
 
-        mockkObject(WordMapper)
-
-        every { WordMapper.fromModel(mockWordModel1) } returns mockWord
-        every { WordMapper.fromModel(mockWordModel2) } returns mockWord
-        every { WordMapper.fromModel(mockWordModel3) } returns mockWord
+        every { WordMapper.fromModel(any()) } returns mockWordEntity
 
         val word: Word = repository.getSingleWordByDifficulty(Difficulty.MEDIUM)
 
-        Assert.assertEquals(mockWord, word)
+        Assert.assertEquals(mockWordEntity, word)
     }
 }
