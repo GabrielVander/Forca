@@ -8,7 +8,7 @@ import retrofit2.http.GET
 interface RetrofitWordApi {
 
     companion object {
-        const val BASE_URL: String = "http://nobile.pro.br/forcaws"
+        const val BASE_URL: String = "http://nobile.pro.br/forcaws/"
         const val IDENTIFIERS_ENDPOINT: String = "identificadores/{difficultyId}"
         const val WORD_ENDPOINT: String = "palavra/{wordIdentifier}"
     }

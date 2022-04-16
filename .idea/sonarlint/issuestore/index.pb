@@ -13,8 +13,6 @@ Zapp/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/presentation/Ha
 Wapp/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/domain/entities/Game.kt,c\f\cf32e699f598235affdad6271e355a80da52a3c7
 é
 ^app/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/presentation/pages/GamePage.kt,6\e\6ef46b0d22d9d90c0bc621b50b937d92e66d7801
-õ
-kapp/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/data/remote/data_sources/RetrofitWordApi.kt,8\0\8000ea4f68314ba20fd722cc6d61d05193106d79
 ê
 `app/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/data/local/mappers/WordMapper.kt,3\9\398c22babd881059c9594d477bd87ef42d89f1c3
 é
