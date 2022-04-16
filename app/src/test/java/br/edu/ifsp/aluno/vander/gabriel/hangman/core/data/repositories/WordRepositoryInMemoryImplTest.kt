@@ -1,10 +1,12 @@
 package br.edu.ifsp.aluno.vander.gabriel.hangman.core.data.repositories
 
+import arrow.core.Either
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.data.local.data_sources.InMemoryDataSource
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.data.local.mappers.WordMapper
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.data.local.models.WordModel
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.entities.Difficulty
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.entities.Word
+import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.failures.Failure
 import io.mockk.*
 import junitparams.JUnitParamsRunner
 import junitparams.Parameters
@@ -97,10 +99,14 @@ internal class WordRepositoryInMemoryImplTest {
 
             val expectedDifficultyEntity: Difficulty = Difficulty.valueOf(expectedDifficulty)
 
-            val word: Word = repository.getSingleWordByDifficulty(expectedDifficultyEntity)
+            val word: Either<Failure, Word> =
+                repository.getSingleWordByDifficulty(expectedDifficultyEntity)
 
-            Assert.assertEquals(expectedDifficultyEntity, word.difficulty)
-
+            Assert.assertTrue(word.isRight())
+            word.fold(
+                ifLeft = {},
+                ifRight = { Assert.assertEquals(expectedDifficultyEntity, it.difficulty) }
+            )
         }
 
     @Test
@@ -123,8 +129,12 @@ internal class WordRepositoryInMemoryImplTest {
 
         every { WordMapper.fromModel(any()) } returns mockWordEntity
 
-        val word: Word = repository.getSingleWordByDifficulty(Difficulty.MEDIUM)
+        val word: Either<Failure, Word> = repository.getSingleWordByDifficulty(Difficulty.MEDIUM)
 
-        Assert.assertEquals(mockWordEntity, word)
+        Assert.assertTrue(word.isRight())
+        word.fold(
+            ifLeft = {},
+            ifRight = { Assert.assertEquals(mockWordEntity, it) }
+        )
     }
 }

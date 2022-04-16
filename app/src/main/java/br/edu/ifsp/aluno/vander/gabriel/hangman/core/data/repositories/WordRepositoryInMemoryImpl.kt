@@ -1,10 +1,12 @@
 package br.edu.ifsp.aluno.vander.gabriel.hangman.core.data.repositories
 
+import arrow.core.Either
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.data.local.data_sources.InMemoryDataSource
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.data.local.mappers.WordMapper
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.data.local.models.WordModel
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.entities.Difficulty
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.entities.Word
+import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.failures.Failure
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.repositories.WordRepository
 
 class WordRepositoryInMemoryImpl(
@@ -12,9 +14,9 @@ class WordRepositoryInMemoryImpl(
 ) :
     WordRepository {
 
-    override suspend fun getSingleWordByDifficulty(difficulty: Difficulty): Word {
+    override suspend fun getSingleWordByDifficulty(difficulty: Difficulty): Either<Failure, Word> {
         val word: WordModel = getRandomWordWithDifficulty(difficulty)
-        return WordMapper.fromModel(word)
+        return Either.Right(WordMapper.fromModel(word))
     }
 
     private suspend fun getRandomWordWithDifficulty(difficulty: Difficulty): WordModel {

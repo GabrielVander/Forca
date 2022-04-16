@@ -1,8 +1,6 @@
 
 X
 (gradle/wrapper/gradle-wrapper.properties,f\b\fbe448ebfc3eb2d4e308f6b8b043666f5b57235e
-ï
-eapp/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/domain/repositories/WordRepository.kt,b\8\b8c6f407805afbbb92000596241ab9f5bbad9c6d
 ù
 mapp/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/data/local/data_sources/InMemoryDataSource.kt,f\3\f36817374b421b686f1671c2f14c5f8615582f91
 ç
@@ -11,3 +9,15 @@ z
 Japp/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/MainActivity.kt,4\8\4826c3240332ca23c5d582a7d4b920ae4e9e48bf
 õ
 kapp/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/presentation/pages/GameConfigurationPage.kt,c\1\c1dca12c7f8ccedb4973ac96c4f6b83221d3db29
+ä
+Zapp/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/presentation/HangmanApp.kt,8\4\84a276be0cc1bad3a7ba2c9cf61aa4140ddd9499
+á
+Wapp/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/domain/entities/Game.kt,c\f\cf32e699f598235affdad6271e355a80da52a3c7
+é
+^app/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/presentation/pages/GamePage.kt,6\e\6ef46b0d22d9d90c0bc621b50b937d92e66d7801
+õ
+kapp/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/data/remote/data_sources/RetrofitWordApi.kt,8\0\8000ea4f68314ba20fd722cc6d61d05193106d79
+ê
+`app/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/data/local/mappers/WordMapper.kt,3\9\398c22babd881059c9594d477bd87ef42d89f1c3
+é
+^app/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/data/local/models/WordModel.kt,7\d\7d0878b54bda2fb3f587ca2770ddbb287958c86e

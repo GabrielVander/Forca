@@ -3,7 +3,9 @@ package br.edu.ifsp.aluno.vander.gabriel.hangman.core.presentation.manager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import arrow.core.Either
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.entities.*
+import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.failures.Failure
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.use_cases.GetRandomWordByDifficultyUseCase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -45,16 +47,23 @@ class MainViewModel : ViewModel() {
                 val previousRound: Round? = currentGame.currentRound
                 val hasPreviousRound: Boolean = previousRound != null
 
-                val word: Word = getWordUseCase.execute(_currentGame.value!!.difficulty)
+                val word: Either<Failure, Word> =
+                    getWordUseCase.execute(_currentGame.value!!.difficulty)
 
-                _currentGame.postValue(
-                    _currentGame.value!!.copy(
-                        currentRound = Round(
-                            word = word,
-                            roundNumber = if (hasPreviousRound) previousRound!!.roundNumber + 1 else 1,
+                word.fold(
+                    ifLeft = {},
+                    ifRight = {
+                        _currentGame.postValue(
+                            _currentGame.value!!.copy(
+                                currentRound = Round(
+                                    word = it,
+                                    roundNumber = if (hasPreviousRound) previousRound!!.roundNumber + 1 else 1,
+                                )
+                            )
                         )
-                    )
+                    }
                 )
+
             }
         }
     }
