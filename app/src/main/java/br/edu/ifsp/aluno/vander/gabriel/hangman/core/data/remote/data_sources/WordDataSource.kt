@@ -37,7 +37,7 @@ class WordDataSource {
     }
 
     suspend fun getWordByIdentifier(wordIdentifier: Int): WordModel? {
-        val response: Response<WordModel> =
+        val response: Response<List<WordModel>> =
             wordApi.getWordByIdentifier(wordIdentifier = wordIdentifier)
 
         if (!response.isSuccessful) {
@@ -49,7 +49,7 @@ class WordDataSource {
             return null
         }
 
-        return response.body()
+        return response.body()?.get(0)
     }
 
 }

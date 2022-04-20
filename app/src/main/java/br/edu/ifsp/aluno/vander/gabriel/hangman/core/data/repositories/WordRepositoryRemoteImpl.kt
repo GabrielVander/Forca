@@ -1,5 +1,6 @@
 package br.edu.ifsp.aluno.vander.gabriel.hangman.core.data.repositories
 
+import android.util.Log
 import arrow.core.Either
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.data.remote.data_sources.WordDataSource
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.data.remote.mappers.WordMapper
@@ -15,6 +16,8 @@ class WordRepositoryRemoteImpl(
     private val wordDataSource: WordDataSource = WordDataSource(),
     private val wordMapper: WordMapper = WordMapper(),
 ) : WordRepository {
+    private val tag: String = "WordRepositoryRemoteImpl"
+
     override suspend fun getSingleWordByDifficulty(difficulty: Difficulty): Either<Failure, Word> {
         try {
             val identifiers: List<Int> =
@@ -31,6 +34,7 @@ class WordRepositoryRemoteImpl(
 
             return Either.Right(wordModel)
         } catch (e: Exception) {
+            Log.e(tag, "getSingleWordByDifficulty: ", e)
             return Either.Left(UnexpectedFailure(exception = e))
         }
     }
