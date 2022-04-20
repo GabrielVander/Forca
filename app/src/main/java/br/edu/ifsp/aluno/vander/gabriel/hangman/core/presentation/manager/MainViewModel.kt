@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import arrow.core.Either
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.entities.*
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.failures.Failure
+import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.failures.UnexpectedFailure
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.use_cases.GetRandomWordByDifficultyUseCase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -13,6 +14,9 @@ import kotlinx.coroutines.launch
 class MainViewModel : ViewModel() {
     private val getWordUseCase: GetRandomWordByDifficultyUseCase =
         GetRandomWordByDifficultyUseCase()
+
+    private val _errorMessage: MutableLiveData<String?> = MutableLiveData(null)
+    val errorMessage: LiveData<String?> = _errorMessage
 
     private val _currentGame: MutableLiveData<Game> = MutableLiveData()
     val currentGame: LiveData<Game> = _currentGame
@@ -44,24 +48,12 @@ class MainViewModel : ViewModel() {
 
         if (currentGame != null) {
             GlobalScope.launch {
-                val previousRound: Round? = currentGame.currentRound
-                val hasPreviousRound: Boolean = previousRound != null
-
                 val word: Either<Failure, Word> =
                     getWordUseCase.execute(_currentGame.value!!.difficulty)
 
                 word.fold(
-                    ifLeft = {},
-                    ifRight = {
-                        _currentGame.postValue(
-                            _currentGame.value!!.copy(
-                                currentRound = Round(
-                                    word = it,
-                                    roundNumber = if (hasPreviousRound) previousRound!!.roundNumber + 1 else 1,
-                                )
-                            )
-                        )
-                    }
+                    ifLeft = { handleWordFailure(it) },
+                    ifRight = { startNewRoundWithWord(it) }
                 )
 
             }
@@ -84,16 +76,6 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    private fun getNewNumberOfGuesses(
-        currentRound: Round,
-        letter: Char
-    ): Int {
-        if (currentRound.word.value.uppercase().contains(letter)) {
-            return currentRound.numberOfGuesses
-        }
-        return currentRound.numberOfGuesses + 1
-    }
-
     fun finishCurrentRound() {
         val pastRounds = _pastRounds.value!!
         val currentRound: Round = _currentGame.value!!.currentRound!!
@@ -105,6 +87,48 @@ class MainViewModel : ViewModel() {
             *(pastRounds.toTypedArray()),
             finishedRound
         )
+    }
+
+    fun clearErrorMessage() {
+        _errorMessage.value = null
+    }
+
+    private fun handleWordFailure(failure: Failure) {
+        when (failure) {
+            is UnexpectedFailure -> {
+                publishUnexpectedErrorMessage(failure)
+            }
+        }
+    }
+
+    private fun publishUnexpectedErrorMessage(failure: UnexpectedFailure) {
+        _errorMessage.postValue("Something unexpected happened\n${failure.exception.localizedMessage}")
+    }
+
+    private fun startNewRoundWithWord(word: Word) {
+        val currentGame = _currentGame.value
+
+        val previousRound: Round? = currentGame!!.currentRound
+        val hasPreviousRound: Boolean = previousRound != null
+
+        _currentGame.postValue(
+            _currentGame.value!!.copy(
+                currentRound = Round(
+                    word = word,
+                    roundNumber = if (hasPreviousRound) previousRound!!.roundNumber + 1 else 1,
+                )
+            )
+        )
+    }
+
+    private fun getNewNumberOfGuesses(
+        currentRound: Round,
+        letter: Char
+    ): Int {
+        if (currentRound.word.value.uppercase().contains(letter)) {
+            return currentRound.numberOfGuesses
+        }
+        return currentRound.numberOfGuesses + 1
     }
 
     private fun checkIfPlayerWonRound(round: Round): Boolean {
