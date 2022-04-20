@@ -9,6 +9,7 @@ import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.entities.Word
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.failures.Failure
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.failures.NoIdentifiersForDifficultyFailure
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.failures.NoWordFoundForIdentifier
+import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.failures.UnexpectedFailure
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.*
@@ -138,4 +139,67 @@ class WordRepositoryRemoteImplTest {
         )
     }
 
+    @Nested
+    @DisplayName("should return UnexpectedFailure if an unexpected exception occurs")
+    inner class UnexpectedFailureTest() {
+
+        @Test
+        fun `when getIdentifiersByDifficulty throws an unexpected exception`(): Unit = runBlocking {
+            coEvery { wordDataSource.getIdentifiersByDifficulty(any()) } throws SomeUnexpectedException()
+
+            val result: Either<Failure, Word> =
+                repository.getSingleWordByDifficulty(difficulty = Difficulty.HARD)
+
+            Assertions.assertTrue(result.isLeft())
+            result.fold(
+                ifLeft = { Assertions.assertInstanceOf(UnexpectedFailure::class.java, it) },
+                ifRight = { fail("Unexpected state") }
+            )
+        }
+
+        @Test
+        fun `when getWordByIdentifier throws an unexpected exception`(): Unit = runBlocking {
+            val mockIdentifiers: List<Int> = listOf(
+                556,
+            )
+
+            coEvery { wordDataSource.getIdentifiersByDifficulty(any()) } returns mockIdentifiers
+            coEvery { wordDataSource.getWordByIdentifier(any()) } throws SomeUnexpectedException()
+
+            val result: Either<Failure, Word> =
+                repository.getSingleWordByDifficulty(difficulty = Difficulty.HARD)
+
+            Assertions.assertTrue(result.isLeft())
+            result.fold(
+                ifLeft = { Assertions.assertInstanceOf(UnexpectedFailure::class.java, it) },
+                ifRight = { fail("Unexpected state") }
+            )
+        }
+
+        @Test
+        fun `when mapper throws an unexpected exception`(): Unit = runBlocking {
+            val mockIdentifiers: List<Int> = listOf(
+                556,
+            )
+
+            val mockWordModel: WordModel = mockk()
+
+            coEvery { wordDataSource.getIdentifiersByDifficulty(any()) } returns mockIdentifiers
+            coEvery { wordDataSource.getWordByIdentifier(any()) } returns mockWordModel
+            every { wordMapper.fromModel(any()) } throws SomeUnexpectedException()
+
+            val result: Either<Failure, Word> =
+                repository.getSingleWordByDifficulty(difficulty = Difficulty.HARD)
+
+            Assertions.assertTrue(result.isLeft())
+            result.fold(
+                ifLeft = { Assertions.assertInstanceOf(UnexpectedFailure::class.java, it) },
+                ifRight = { fail("Unexpected state") }
+            )
+        }
+
+    }
+
 }
+
+class SomeUnexpectedException() : Exception()
