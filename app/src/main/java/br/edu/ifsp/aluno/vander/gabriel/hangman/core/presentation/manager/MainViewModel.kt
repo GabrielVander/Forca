@@ -8,10 +8,14 @@ import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.entities.*
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.failures.Failure
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.failures.UnexpectedFailure
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.use_cases.GetRandomWordByDifficultyUseCase
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
+    private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO + Job())
+
     private val getWordUseCase: GetRandomWordByDifficultyUseCase =
         GetRandomWordByDifficultyUseCase()
 
@@ -54,23 +58,18 @@ class MainViewModel : ViewModel() {
     }
 
     fun startNewRound() {
-        _loading.postValue(LoadingMessage("Starting new round..."))
-        val currentGame = _currentGame.value
+        coroutineScope.launch {
+            _loading.postValue(LoadingMessage("Fetching new word..."))
 
-        if (currentGame != null) {
-            GlobalScope.launch {
-                _loading.postValue(LoadingMessage("Fetching new word..."))
+            val word: Either<Failure, Word> =
+                getWordUseCase.execute(_configuration.value!!.difficulty)
 
-                val word: Either<Failure, Word> =
-                    getWordUseCase.execute(_configuration.value!!.difficulty)
+            word.fold(
+                ifLeft = { handleWordFailure(it) },
+                ifRight = { startNewRoundWithWord(it) },
+            )
 
-                word.fold(
-                    ifLeft = { handleWordFailure(it) },
-                    ifRight = { startNewRoundWithWord(it) },
-                )
-
-                _loading.postValue(null)
-            }
+            _loading.postValue(null)
         }
     }
 
@@ -105,10 +104,6 @@ class MainViewModel : ViewModel() {
 
     fun clearErrorMessage() {
         _errorMessage.value = null
-    }
-
-    fun clearLoadingMessage() {
-        _loading.postValue(null)
     }
 
     private fun handleWordFailure(failure: Failure) {
