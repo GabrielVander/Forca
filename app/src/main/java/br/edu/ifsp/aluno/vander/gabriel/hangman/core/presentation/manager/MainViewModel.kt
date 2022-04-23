@@ -21,6 +21,9 @@ class MainViewModel : ViewModel() {
     private val _currentGame: MutableLiveData<Game> = MutableLiveData()
     val currentGame: LiveData<Game> = _currentGame
 
+    private val _configuration: MutableLiveData<Configuration> = MutableLiveData(Configuration())
+    val configuration: LiveData<Configuration> = _configuration
+
     private val _pastRounds: MutableLiveData<List<Round>> = MutableLiveData(listOf())
     val pastRounds: LiveData<List<Round>> = _pastRounds
 
@@ -33,16 +36,20 @@ class MainViewModel : ViewModel() {
     }
 
     fun setGameDifficulty(difficulty: Difficulty) {
-        _currentGame.value = _currentGame.value?.copy(
-            difficulty = difficulty,
-            configurationStatus = ConfigurationStatus.CONFIGURING_ROUNDS
+        _configuration.postValue(
+            _configuration.value!!.copy(
+                difficulty = difficulty,
+                configurationStatus = ConfigurationStatus.CONFIGURING_ROUNDS
+            )
         )
     }
 
     fun setNumberOfRounds(numberOfRounds: Int) {
-        _currentGame.value = _currentGame.value?.copy(
-            amountOfRounds = numberOfRounds,
-            configurationStatus = ConfigurationStatus.FINISHED
+        _configuration.postValue(
+            _configuration.value!!.copy(
+                amountOfRounds = numberOfRounds,
+                configurationStatus = ConfigurationStatus.FINISHED
+            )
         )
     }
 
@@ -55,7 +62,7 @@ class MainViewModel : ViewModel() {
                 _loading.postValue(LoadingMessage("Fetching new word..."))
 
                 val word: Either<Failure, Word> =
-                    getWordUseCase.execute(_currentGame.value!!.difficulty)
+                    getWordUseCase.execute(_configuration.value!!.difficulty)
 
                 word.fold(
                     ifLeft = { handleWordFailure(it) },

@@ -5,8 +5,6 @@ X
 mapp/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/data/local/data_sources/InMemoryDataSource.kt,f\3\f36817374b421b686f1671c2f14c5f8615582f91
 z
 Japp/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/MainActivity.kt,4\8\4826c3240332ca23c5d582a7d4b920ae4e9e48bf
-õ
-kapp/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/presentation/pages/GameConfigurationPage.kt,c\1\c1dca12c7f8ccedb4973ac96c4f6b83221d3db29
 ê
 `app/src/main/java/br/edu/ifsp/aluno/vander/gabriel/hangman/core/data/local/mappers/WordMapper.kt,3\9\398c22babd881059c9594d477bd87ef42d89f1c3
 é

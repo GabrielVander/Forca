@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.entities.Configuration
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.entities.Game
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.entities.Round
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.entities.Word
@@ -30,6 +31,7 @@ fun GamePage(
     mainViewModel: MainViewModel
 ) {
     val game: Game? by mainViewModel.currentGame.observeAsState(null)
+    val configuration: Configuration? by mainViewModel.configuration.observeAsState()
     val gameIsRunning: Boolean = game == null || game!!.currentRound == null
     val loadingMessage: LoadingMessage? by mainViewModel.loading.observeAsState()
 
@@ -57,7 +59,7 @@ fun GamePage(
                     onLetterChosen = { mainViewModel.addGuess(it) },
                     onEndRound = {
                         mainViewModel.finishCurrentRound()
-                        if (game!!.currentRound!!.roundNumber < game!!.amountOfRounds) {
+                        if (game!!.currentRound!!.roundNumber < configuration!!.amountOfRounds) {
                             mainViewModel.startNewRound()
                         } else {
                             navController.navigate("game_result") {

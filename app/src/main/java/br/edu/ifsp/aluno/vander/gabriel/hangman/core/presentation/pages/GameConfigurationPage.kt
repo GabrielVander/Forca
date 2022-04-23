@@ -11,9 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.entities.Configuration
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.entities.ConfigurationStatus
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.entities.Difficulty
-import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.entities.Game
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.presentation.manager.MainViewModel
 import com.chargemap.compose.numberpicker.NumberPicker
 
@@ -22,7 +22,7 @@ fun GameConfigurationPage(
     navController: NavController,
     mainViewModel: MainViewModel,
 ) {
-    val game: Game? by mainViewModel.currentGame.observeAsState(null)
+    val configuration: Configuration? by mainViewModel.configuration.observeAsState()
 
     Scaffold {
         Column(
@@ -32,17 +32,17 @@ fun GameConfigurationPage(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            when (game?.configurationStatus) {
+            when (configuration!!.configurationStatus) {
                 ConfigurationStatus.CONFIGURING_DIFFICULTY -> DifficultyConfiguration(mainViewModel)
-                ConfigurationStatus.CONFIGURING_ROUNDS -> RoundConfiguration(onSave = {
-                    mainViewModel.setNumberOfRounds(it)
-                    navController.navigate("game") {
-                        popUpTo("main")
+                ConfigurationStatus.CONFIGURING_ROUNDS -> RoundConfiguration(
+                    onSave = {
+                        mainViewModel.setNumberOfRounds(it)
+                        navController.navigate("game") {
+                            popUpTo("main")
+                        }
                     }
-                })
-                else -> {
-                    Text(text = "Something went wrong")
-                }
+                )
+                ConfigurationStatus.FINISHED -> Unit
             }
         }
     }
