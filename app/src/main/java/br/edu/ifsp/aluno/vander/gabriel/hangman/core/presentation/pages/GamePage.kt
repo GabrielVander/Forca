@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +21,7 @@ import androidx.navigation.NavHostController
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.entities.Game
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.entities.Round
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.domain.entities.Word
+import br.edu.ifsp.aluno.vander.gabriel.hangman.core.presentation.manager.LoadingMessage
 import br.edu.ifsp.aluno.vander.gabriel.hangman.core.presentation.manager.MainViewModel
 
 @Composable
@@ -29,6 +31,7 @@ fun GamePage(
 ) {
     val game: Game? by mainViewModel.currentGame.observeAsState(null)
     val gameIsRunning: Boolean = game == null || game!!.currentRound == null
+    val loadingMessage: LoadingMessage? by mainViewModel.loading.observeAsState()
 
     Scaffold {
         Column(
@@ -38,22 +41,32 @@ fun GamePage(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Content(
-                gameIsRunning = gameIsRunning,
-                currentRound = game?.currentRound,
-                onGameStart = { mainViewModel.startNewRound() },
-                onLetterChosen = { mainViewModel.addGuess(it) },
-                onEndRound = {
-                    mainViewModel.finishCurrentRound()
-                    if (game!!.currentRound!!.roundNumber < game!!.amountOfRounds) {
-                        mainViewModel.startNewRound()
-                    } else {
-                        navController.navigate("game_result") {
-                            popUpTo("main")
+            if (loadingMessage != null) {
+                Column(
+                    modifier = Modifier,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CircularProgressIndicator()
+                    Text(text = loadingMessage!!.message)
+                }
+            } else {
+                Content(
+                    gameIsRunning = gameIsRunning,
+                    currentRound = game?.currentRound,
+                    onGameStart = { mainViewModel.startNewRound() },
+                    onLetterChosen = { mainViewModel.addGuess(it) },
+                    onEndRound = {
+                        mainViewModel.finishCurrentRound()
+                        if (game!!.currentRound!!.roundNumber < game!!.amountOfRounds) {
+                            mainViewModel.startNewRound()
+                        } else {
+                            navController.navigate("game_result") {
+                                popUpTo("main")
+                            }
                         }
                     }
-                }
-            )
+                )
+            }
         }
     }
 }

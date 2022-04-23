@@ -24,6 +24,9 @@ class MainViewModel : ViewModel() {
     private val _pastRounds: MutableLiveData<List<Round>> = MutableLiveData(listOf())
     val pastRounds: LiveData<List<Round>> = _pastRounds
 
+    private val _loading: MutableLiveData<LoadingMessage?> = MutableLiveData(null)
+    val loading: LiveData<LoadingMessage?> = _loading
+
     fun newGame() {
         _pastRounds.value = listOf()
         _currentGame.value = Game()
@@ -44,18 +47,22 @@ class MainViewModel : ViewModel() {
     }
 
     fun startNewRound() {
+        _loading.postValue(LoadingMessage("Starting new round..."))
         val currentGame = _currentGame.value
 
         if (currentGame != null) {
             GlobalScope.launch {
+                _loading.postValue(LoadingMessage("Fetching new word..."))
+
                 val word: Either<Failure, Word> =
                     getWordUseCase.execute(_currentGame.value!!.difficulty)
 
                 word.fold(
                     ifLeft = { handleWordFailure(it) },
-                    ifRight = { startNewRoundWithWord(it) }
+                    ifRight = { startNewRoundWithWord(it) },
                 )
 
+                _loading.postValue(null)
             }
         }
     }
@@ -91,6 +98,10 @@ class MainViewModel : ViewModel() {
 
     fun clearErrorMessage() {
         _errorMessage.value = null
+    }
+
+    fun clearLoadingMessage() {
+        _loading.postValue(null)
     }
 
     private fun handleWordFailure(failure: Failure) {
@@ -137,3 +148,5 @@ class MainViewModel : ViewModel() {
         )
     }
 }
+
+data class LoadingMessage(val message: String)
